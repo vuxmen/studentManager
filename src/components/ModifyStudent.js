@@ -1,52 +1,59 @@
 import React from 'react';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import style from './NewStudent.module.css';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { editingImg,
         editingName,
         editingDayAdmission,
         editingBirthday,
         editingPhoneNumber,
         editingGender,
+        saveModifiedList
     } from '../action/actionCreator';
+import { useHistory } from 'react-router-dom';
 
 export default function ModifyStudent() {
+    const dispatch = useDispatch();
+    const history = useHistory();
     const studentisModified = useSelector(state => state.students.studentisModified);
     const editorName = useSelector(state => state.students.studentisModified.name);
     const editorPhoneNumber = useSelector(state => state.students.studentisModified.phoneNumber);
     const editorBirthday = useSelector(state => state.students.studentisModified.birthday);
-    const editorDayAdmission = useSelector(state => state.students.studentisModified.dayAdmission);
     const editorGender = useSelector(state => state.students.studentisModified.gender);
+    const editorDayAdmission = useSelector(state => state.students.studentisModified.dayAdmission);
     const editorImg = useSelector(state => state.students.studentisModified.img);
-    const dispatch = useDispatch();
-
+    const studentList = useSelector(state => state.students.studentList);
+    
     const handleSaveModify = () => {
-        const modifiedList = localStorage.getItem('modifiedList');
-        if (modifiedList) {
-            const getList = JSON.parse(modifiedList);
-            if (getList.find(item => item.id === studentisModified.id)) {
-                let newList = getList.map(item => (item.id === studentisModified.id) ? studentisModified: item);
-                localStorage.setItem('modifiedList', JSON.stringify(newList));
-            } else {
-                getList.push(studentisModified);
-                localStorage.setItem('modifiedList', JSON.stringify(getList));
-            }
-        } else localStorage.setItem('modifiedList', JSON.stringify([studentisModified]));
-        localStorage.removeItem('studentModifying');
-        window.location.replace("/");
+        const newModifiedList = studentList.map(student =>
+            (student.id === studentisModified.id)
+                ? studentisModified : student
+            );
+        dispatch(saveModifiedList(newModifiedList));
+        localStorage.setItem('updatedList', JSON.stringify(newModifiedList));
+        history.push('/');
     }
+
     const handleCancelModify = () => {
-        localStorage.removeItem('studentModifying');
-        window.location.replace("/");
+        dispatch(editingName(''));
+        dispatch(editingBirthday(''));
+        dispatch(editingPhoneNumber(''));
+        dispatch(editingDayAdmission(''));
+        dispatch(editingGender(''));
+        dispatch(editingImg(''));
+        history.push('/');
     }
+
     const checkMale = () => {
         if (editorGender === "Nam") return true
         else return false;
     }
+
     const checkFemale = () => {
         if (editorGender === "Nữ") return true;
         else return false;
     }
+
     const handleUploadImage = objImg => {
         if (objImg) {
             const urlImg = URL.createObjectURL(objImg);
@@ -54,29 +61,9 @@ export default function ModifyStudent() {
             URL.revokeObjectURL(objImg);
         } else return 
     }
-    const handleChangeName = name => {
-        if (name && name!== editorName) 
-            dispatch(editingName(name));
-        else return
-    }
-    const handleChangeBirthday = birthday => {
-        if (birthday && birthday!== editorBirthday) 
-            dispatch(editingBirthday(birthday));
-        else return
-    }
-    const handleChangeDayAdmission = dayAdmission => {
-        if (dayAdmission && dayAdmission!== editorDayAdmission) 
-            dispatch(editingDayAdmission(dayAdmission));
-        else return
-    }
-    const handleChangePhoneNumber = phoneNumber => {
-        if (phoneNumber && phoneNumber!== editorPhoneNumber) 
-            dispatch(editingPhoneNumber(phoneNumber));
-        else return
-    }
+
     const handleChangeGender = (gender, checked) => {
         if (checked) dispatch(editingGender(gender));
-        else return
     }
 
     return (
@@ -96,12 +83,12 @@ export default function ModifyStudent() {
                         
                     </div>
                     <input className = {style.standard2} type="text" value = {editorName}
-                     onChange = {e => handleChangeName(e.target.value)} />
+                     onChange = {e => dispatch(editingName(e.target.value))} />
                 </div>
                 <div>
                     <label htmlFor="">Ngày sinh</label>
                     <input className = {style.standard1} type="date" value = {editorBirthday}
-                     onChange = {e => handleChangeBirthday(e.target.value)}/>
+                     onChange = {e => dispatch(editingBirthday(e.target.value))}/>
                 </div>
                 <div>
                     <label htmlFor="gender">Giới tính</label>
@@ -123,12 +110,12 @@ export default function ModifyStudent() {
                 <div>
                     <label htmlFor="dateAdmission">Ngày nhập học</label>
                     <input  className = {style.standard1} type="date" id ="dateAdmission" name = "dateAdmission"
-                     value = {editorDayAdmission} onChange = {e => handleChangeDayAdmission(e.target.value)}/>
+                     value = {editorDayAdmission} onChange = {e => dispatch(editingDayAdmission(e.target.value))}/>
                 </div>
                 <div>
                     <label htmlFor="phoneNumber">Điện thoại</label>
                     <input className = {style.standard1} type="text" 
-                    value = {editorPhoneNumber} onChange = {e => handleChangePhoneNumber(e.target.value)}/>
+                    value = {editorPhoneNumber} onChange = {e => dispatch(editingPhoneNumber(e.target.value))}/>
                 </div>
                 
             </form>

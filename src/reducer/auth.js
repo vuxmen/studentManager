@@ -1,24 +1,20 @@
-const setModifiedList = () => {
-    const localModifiedList = localStorage.getItem('localModifiedList');
-    if (localModifiedList) return (JSON.parse(localModifiedList));
-    else return [];
-}
-
-const setAddedList = () => {
-    const localAddedList = localStorage.getItem('localAddedList');
-    if (localAddedList) return (JSON.parse(localAddedList));
-    else return [];
-}
+import { actionType } from '../action/actionType';
 
 export const auth = (state = {
-    modifiedList: [],
-    addedList: [],
+    loadingCount: 0,
+    searching: false
 }, action) => {
     switch(action.type) {
-        case "@@INIT": {
+        case actionType.CHANGE_LOADING_COUNT: {
             return {
-                modifiedList: setModifiedList(),
-                addedList: setAddedList(),
+                ...state,
+                loadingCount: state.loadingCount + 1
+            }
+        }
+        case actionType.SEARCH_STUDENT: {
+            return {
+                ...state,
+                searching: action.payload.value
             }
         }
         default: return state;

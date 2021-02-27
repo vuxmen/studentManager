@@ -3,4 +3,6 @@ import { pagination } from './pagination';
 import { students } from './students';
 import { userInteract } from './userInteract';
 import { auth } from './auth';
-export default combineReducers({auth, pagination, students, userInteract});
+import { status } from './status';
+
+export default combineReducers({auth, pagination, students, userInteract, status});

@@ -37,12 +37,19 @@ export const decreasePageNumber = () => (
     }
 )
 
-export const searchStudent = (studentsMatched) => (
+export const changeSearchingValue = value => (
+    {
+        type: actionType.CHANGE_SEARCHING_VALUE,
+        payload: {
+            value
+        }
+    }
+)
+
+export const searchStudent = () => (
     {
         type: actionType.SEARCH_STUDENT,
-        payload: {
-            studentsMatched
-        }
+        payload: {}
     }
 )
 
@@ -100,6 +107,34 @@ export const editingGender = gender => (
     }
 )
 
+export const passingID = id => (
+    {
+        type: actionType.MODIFY_STUDENT.PASSING_ID,
+        payload: {
+            id
+        }
+    }
+)
+
+export const saveModifiedList = newStudentList => (
+    {
+        type: actionType.MODIFY_STUDENT.SAVE,
+        payload: {
+            newStudentList
+        }
+    }
+)
+
+
+export const saveAddedList = newStudentList => (
+    {
+        type: actionType.ADD_STUDENT.SAVE,
+        payload: {
+            newStudentList
+        }
+    }
+)
+
 export const addingImg = urlImg => (
     {
         type: actionType.ADD_STUDENT.ADDING_IMG,
@@ -153,6 +188,7 @@ export const addingGender = gender => (
         }
     }
 )
+
 
 
 

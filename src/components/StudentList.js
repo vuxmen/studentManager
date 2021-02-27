@@ -5,22 +5,26 @@ import { useSelector } from 'react-redux';
 
 export default function StudentList() {
     const studentList = useSelector(state => state.students.studentList);
-    const totalStudent = useSelector(state => state.students.totalStudent);
     const currentPage = useSelector(state => state.pagination.currentPage);
-    const studentMatchedWithSearch = useSelector(state => state.students.studentMatchedWithSearch);
-    
-    const filterStudentIndex = () => ([
+    const searchValue = useSelector(state => state.status.searchValue);
+    const searching = useSelector(state => state.status.searching);
+
+    const filterStudentIndexForCurrentPage = () => ([
         (currentPage - 1) * 6,
         (currentPage - 1) * 6 + 1,
         (currentPage - 1) * 6 + 2,
         (currentPage - 1) * 6 + 3,
         (currentPage - 1) * 6 + 4,
         (currentPage - 1) * 6 + 5
-    ].filter(page => page < totalStudent));
+    ]);
 
+    const filterStudentMatchedWithSearch = searchValue => 
+    studentList.filter(student => student.name.includes(searchValue) 
+    || student.phoneNumber.includes(searchValue));
     
     const renderStudentList = () => (
-        filterStudentIndex().map(item => studentList[item])
+        filterStudentIndexForCurrentPage().filter(index => index < studentList.length)
+        .map(item => studentList[item])
         .map(student =>
             <StudentItem 
                 key = {student.id}
@@ -29,25 +33,39 @@ export default function StudentList() {
         )
     );
 
-    const renderSearchedList = () => (
-        studentMatchedWithSearch.map(student => 
+    const renderSearchedList = () => {
+        const searchedList = filterStudentMatchedWithSearch(searchValue);
+        return (
+            filterStudentIndexForCurrentPage().filter(index => index < searchedList.length)
+            .map(item => searchedList[item])
+            .map(student => 
             <StudentItem 
                 key = {student.id}
                 student = {student}
-            />   
-        )
-    );
+            />)
+        );
+    }
 
-    if (studentMatchedWithSearch.length === 0) {
+    if (searching === false || (searching === true && searchValue === '')) {
         return (
             <div className = {style.list} >
                 {renderStudentList()}
             </div>
-        );
-    } else return (
+        );  
+    } 
+    if (searching === true && filterStudentMatchedWithSearch(searchValue).length !== 0) {
+        return (
             <div className = {style.list} >
                 {renderSearchedList()}
             </div>
         );
+    }
+    if (searching === true && filterStudentMatchedWithSearch(searchValue).length === 0) {
+        return (
+            <div className = {style.list} >
+                <p>Không tìm thấy kết quả nào</p>
+            </div>
+        );
+    } 
     
 }

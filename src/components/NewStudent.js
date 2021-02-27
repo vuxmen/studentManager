@@ -8,7 +8,9 @@ import { addingBirthday,
         addingImg,
         addingPhoneNumber,
         addingName,
+        saveAddedList
 } from '../action/actionCreator';
+import { useHistory } from 'react-router-dom';
 
 export default function NewStudent() {
     const newStudent = useSelector(state => state.students.newStudent);
@@ -17,69 +19,43 @@ export default function NewStudent() {
     const birthdayAdding = useSelector(state => state.students.newStudent.birthday);
     const phoneNumberAdding = useSelector(state => state.students.newStudent.phoneNumber);
     const dayAdmissionAdding = useSelector(state => state.students.newStudent.dayAdmission);
-    const genderAdding = useSelector(state => state.students.newStudent.gender);
+    const studentList = useSelector(state => state.students.studentList);
 
     const dispatch = useDispatch();
+    const history = useHistory();
 
-    const handleAddStudent = () => {
-        const addedList = localStorage.getItem('addedList');
+    const handleSaveAdded = () => {
         newStudent.id = Math.floor(Math.random() * 100000);
-        if (addedList) {
-            const getList = JSON.parse(addedList);
-            getList.push(newStudent);
-            localStorage.setItem('addedList', JSON.stringify(getList));
-        } else localStorage.setItem('addedList', JSON.stringify([newStudent]));
-        window.location.replace("/");
+        studentList.push(newStudent);
+        localStorage.setItem('updatedList', JSON.stringify(studentList));
+        dispatch(saveAddedList(studentList));
+        history.push('/');
     }
 
-    const backtoHomePage = () => window.location.replace("/");
+    const handleCancelAdding = () => {
+        dispatch(addingName(''));
+        dispatch(addingPhoneNumber(''));
+        dispatch(addingBirthday(''));
+        dispatch(addingDayAdmission(''));
+        dispatch(addingImg(''));
+        dispatch(addingGender(''));
+        history.push('/');
+    }
 
     const handleUploadImage = objImg => {
-        if (objImg) {
-            const urlImg = URL.createObjectURL(objImg);
-            dispatch(addingImg(urlImg));
-        } else return
-    }
-
-    const handleAddName = name => {
-        if (name) dispatch(addingName(name));
-        else return
-    }
-
-    const handleAddPhoneNumber = phoneNumber => {
-        if (phoneNumber) dispatch(addingPhoneNumber(phoneNumber));
-        else return
-    }
-
-    const handleAddBirthday = birthday => {
-        if (birthday) dispatch(addingBirthday(birthday));
-        else return
-    }
-
-    const handleAddDayAdmission = dayAdmission => {
-        if (dayAdmission) dispatch(addingDayAdmission(dayAdmission));
-        else return
+        const urlImg = URL.createObjectURL(objImg);
+        dispatch(addingImg(urlImg));
     }
 
     const handleAddGender = (gender, checked) => {
         if (checked) dispatch(addingGender(gender));
-        else return
     }
 
-    const checkMale = () => {
-        if (genderAdding === "Nam") return true
-        else return false;
-    }
-    const checkFemale = () => {
-        if (genderAdding === "Nữ") return true;
-        else return false;
-    }
-
-      
+    
 
     return (
         <div className = {style.newStudent}>
-            <div className = {style.topbar} onClick = {backtoHomePage}>
+            <div className = {style.topbar} onClick = {handleCancelAdding}>
                 <ArrowBackIosIcon className = {style.arrowIcon}/>
                 <h2>Danh sách</h2>
             </div>
@@ -93,24 +69,24 @@ export default function NewStudent() {
                         </label>
                     </div>
                     <input className = {style.standard2} type="text" value = {nameAdding}
-                     onChange = {e => handleAddName(e.target.value)}/>
+                     onChange = {e => dispatch(addingName(e.target.value))}/>
                 </div>
                 <div>
                     <label htmlFor="">Ngày sinh</label>
                     <input className = {style.standard1} type="date" 
                     id="dateOfBirth" name="dateOfBirth" value = {birthdayAdding} 
-                    onChange = {e => handleAddBirthday(e.target.value)}/>
+                    onChange = {e => dispatch(addingBirthday((e.target.value)))}/>
                 </div>
                 <div>
                     <label htmlFor="gender">Giới tính</label>
                     <div className = {style.gender}>
                         <div>
-                            <input className = {style.standard3} type="checkbox" checked = {checkMale()}
+                            <input className = {style.standard3} type="checkbox" 
                             value = "Nam" onChange = {e => handleAddGender(e.target.value, e.target.checked)}/>
                             <label htmlFor="Nam" >Nam</label>
                         </div>
                         <div>
-                            <input className = {style.standard3} type="checkbox" checked = {checkFemale()}
+                            <input className = {style.standard3} type="checkbox" 
                             value = "Nữ" onChange = {e => handleAddGender(e.target.value, e.target.checked)}/>
                             <label htmlFor="Nữ" >Nữ</label>
                         </div>
@@ -122,19 +98,19 @@ export default function NewStudent() {
                     <label htmlFor="dateAdmission">Ngày nhập học</label>
                     <input  className = {style.standard1} type="date"
                     value = {dayAdmissionAdding}
-                    onChange = {e => handleAddDayAdmission(e.target.value)}/>
+                    onChange = {e => dispatch(addingDayAdmission((e.target.value)))}/>
                 </div>
                 <div>
                     <label htmlFor="phoneNumber">Điện thoại</label>
                     <input className = {style.standard1} type="text"
                     value = {phoneNumberAdding}
-                    onChange = {e => handleAddPhoneNumber(e.target.value)}/>
+                    onChange = {e => dispatch(addingPhoneNumber((e.target.value)))}/>
                 </div>
                 
             </form>
             <div className = {style.button_group}>
-                <button className = {style.add_butt} onClick = {handleAddStudent}>Thêm</button>
-                <button className = {style.cancel_butt} onClick = {backtoHomePage}>Huỷ</button>
+                <button className = {style.add_butt} onClick = {handleSaveAdded}>Thêm</button>
+                <button className = {style.cancel_butt} onClick = {handleCancelAdding}>Huỷ</button>
             </div>
         </div>
     );

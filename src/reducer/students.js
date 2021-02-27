@@ -1,35 +1,9 @@
 import studentData  from "../studentData";
 import { actionType } from '../action/actionType';
 
-
-const getStudentModify = () => {
-    const student = localStorage.getItem('studentModifying');
-    if (student)
-        return JSON.parse(student);
-    else return {
-        id: '',
-        name: '',
-        age: '',
-        phoneNumber: '',
-        birthday: '',
-        gender: '',
-        dayAdmission: '',
-        img: ''
-    }
-}
-
-const setStudentList = () => {
-    const modifiedList = localStorage.getItem('modifiedList');
-    const addedList = localStorage.getItem('addedList');
-    if (modifiedList && addedList) 
-        return studentData.map(student => JSON.parse(modifiedList)
-        .find(item => item.id === student.id) || student)
-        .concat(JSON.parse(addedList));
-    else if (modifiedList && !addedList) 
-        return studentData.map(student => JSON.parse(modifiedList)
-        .find(item => item.id === student.id) || student);
-    else if (!modifiedList && addedList)
-        return studentData.concat(JSON.parse(addedList));
+const getStudentList = () => {
+    const localList = localStorage.getItem('updatedList');
+    if (localList) return JSON.parse(localList);
     else return studentData;
 }
 
@@ -37,27 +11,28 @@ const initialState = {
     newStudent: {
         id: '',
         name: '',
-        age: '',
         phoneNumber: '',
         birthday: '',
         gender: '',
         dayAdmission: '',
         img: './studentImg/default.png'
     },
-    studentisModified: getStudentModify(),
-    studentList : setStudentList(),
-    totalStudent: setStudentList().length,
-    studentMatchedWithSearch: []
+    studentisModified: {
+        id: '',
+        name: '',
+        phoneNumber: '',
+        birthday: '',
+        gender: '',
+        dayAdmission: '',
+        img: ''
+    },
+    studentList : getStudentList(),
+    totalStudent: getStudentList().length
+    
 }
 
 export const students = (state = initialState, action) => {
     switch(action.type) {
-        case actionType.SEARCH_STUDENT: {
-            return {
-                ...state,
-                studentMatchedWithSearch: action.payload.studentsMatched
-            }
-        }
         
         case actionType.MODIFY_STUDENT.EDITING_IMG: {
             return {
@@ -113,6 +88,31 @@ export const students = (state = initialState, action) => {
                 }
             }
         }
+        case actionType.MODIFY_STUDENT.PASSING_ID: {
+            return {
+                ...state,
+                studentisModified: {
+                    ...state.studentisModified,
+                    id: action.payload.id
+                }
+            }
+        }
+        case actionType.MODIFY_STUDENT.SAVE: {
+            return {
+                ...state,
+                studentisModified: {
+                    id: '',
+                    name: '',
+                    age: '',
+                    phoneNumber: '',
+                    birthday: '',
+                    gender: '',
+                    dayAdmission: '',
+                    img: ''
+                },
+                studentList: action.payload.newStudentList
+            }
+        }
         case actionType.ADD_STUDENT.ADDING_IMG: {
             return {
                 ...state,
@@ -165,6 +165,12 @@ export const students = (state = initialState, action) => {
                     ...state.newStudent,
                     gender: action.payload.gender
                 }
+            }
+        }
+        case actionType.ADD_STUDENT.SAVE: {
+            return {
+                ...state,
+                studentList: action.payload.newStudentList
             }
         }
         default: return state;
