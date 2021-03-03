@@ -100,16 +100,6 @@ export const students = (state = initialState, action) => {
         case actionType.MODIFY_STUDENT.SAVE: {
             return {
                 ...state,
-                studentisModified: {
-                    id: '',
-                    name: '',
-                    age: '',
-                    phoneNumber: '',
-                    birthday: '',
-                    gender: '',
-                    dayAdmission: '',
-                    img: ''
-                },
                 studentList: action.payload.newStudentList
             }
         }
