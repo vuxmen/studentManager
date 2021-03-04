@@ -78,13 +78,16 @@
 
 .gender {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     flex: 0 0 70%;
 }
 
 .gender > div {
-    flex: 0 0 70%;
+    display: flex;
+}
+
+.manCheckBox {
+    margin-right: 16px;
 }
 
 .gender input {

@@ -80,7 +80,7 @@ export default function NewStudent() {
                 <div>
                     <label htmlFor="gender">Giới tính</label>
                     <div className = {style.gender}>
-                        <div>
+                        <div className={style.manCheckBox}>
                             <input className = {style.standard3} type="checkbox" 
                             value = "Nam" onChange = {e => handleAddGender(e.target.value, e.target.checked)}/>
                             <label htmlFor="Nam" >Nam</label>
