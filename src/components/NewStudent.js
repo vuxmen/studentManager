@@ -1,117 +1,142 @@
-import React from 'react';
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import style from './NewStudent.module.css';
-import { useSelector, useDispatch } from 'react-redux';
-import { addingBirthday,
-        addingDayAdmission,
-        addingGender,
-        addingImg,
-        addingPhoneNumber,
-        addingName,
-        saveAddedList
-} from '../action/actionCreator';
-import { useHistory } from 'react-router-dom';
+import React from "react";
+
+import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
+import style from "./NewStudent.module.css";
+import { Formik, Field, ErrorMessage } from "formik";
+import { useDispatch } from "react-redux";
+import { saveStudent } from "../action/actionCreator";
+import { useHistory } from "react-router-dom";
+import * as Yup from "yup";
 
 export default function NewStudent() {
-    const newStudent = useSelector(state => state.students.newStudent);
-    const imgAdding = useSelector(state => state.students.newStudent.img);
-    const nameAdding = useSelector(state => state.students.newStudent.name);
-    const birthdayAdding = useSelector(state => state.students.newStudent.birthday);
-    const phoneNumberAdding = useSelector(state => state.students.newStudent.phoneNumber);
-    const dayAdmissionAdding = useSelector(state => state.students.newStudent.dayAdmission);
-    const studentList = useSelector(state => state.students.studentList);
+  const dispatch = useDispatch();
+  const history = useHistory();
 
-    const dispatch = useDispatch();
-    const history = useHistory();
+  const handleSaveAdded = (values) => {
+    dispatch(saveStudent(values));
+    history.push("/");
+  };
 
-    const handleSaveAdded = () => {
-        newStudent.id = Math.floor(Math.random() * 100000);
-        studentList.push(newStudent);
-        localStorage.setItem('updatedList', JSON.stringify(studentList));
-        dispatch(saveAddedList(studentList));
-        history.push('/');
-    }
+  const handleCancelAdding = () => {
+    history.push("/");
+  };
 
-    const handleCancelAdding = () => {
-        dispatch(addingName(''));
-        dispatch(addingPhoneNumber(''));
-        dispatch(addingBirthday(''));
-        dispatch(addingDayAdmission(''));
-        dispatch(addingImg(''));
-        dispatch(addingGender(''));
-        history.push('/');
-    }
+  return (
+    <div className={style.newStudent}>
+      <div className={style.topbar} onClick={handleCancelAdding}>
+        <ArrowBackIosIcon className={style.arrowIcon} />
+        <h2>Danh sách</h2>
+      </div>
+      <Formik
+        initialValues={{
+          img: "./studentImg/default.png",
+          name: "",
+          phoneNumber: "",
+          birthday: "",
+          isMan: false,
+          isWoman: false,
+          dayAdmission: "",
+        }}
+        validationSchema={Yup.object().shape({
+          phoneNumber: Yup.string().required("Vui lòng nhập số điện thoại"),
+        })}
+        validate={(values) => {
+          const errors = {};
 
-    const handleUploadImage = objImg => {
-        const urlImg = URL.createObjectURL(objImg);
-        dispatch(addingImg(urlImg));
-    }
+          if (!values.name) {
+            errors.name = "Vui lòng nhập tên";
+          }
 
-    const handleAddGender = (gender, checked) => {
-        if (checked) dispatch(addingGender(gender));
-    }
-
-    
-
-    return (
-        <div className = {style.newStudent}>
-            <div className = {style.topbar} onClick = {handleCancelAdding}>
-                <ArrowBackIosIcon className = {style.arrowIcon}/>
-                <h2>Danh sách</h2>
-            </div>
-            <form className = {style.form}>
-                <div className = {style.firstContent}>
-                    <div className = {style.img_container}>
-                        <label htmlFor="imageUpload">
-                            <input type="file" id ="imageUpload" className = {style.file}
-                            onChange = {e => handleUploadImage(e.target.files[0])}/>
-                            <img src={imgAdding} alt={nameAdding}/>
-                        </label>
+          return errors;
+        }}
+        onSubmit={handleSaveAdded}
+      >
+        {({ values, setFieldValue, handleSubmit, isValid }) => {
+          return (
+            <React.Fragment>
+              <form className={style.form}>
+                <div className={style.firstContent}>
+                  <div className={style.img_container}>
+                    <label htmlFor="imageUpload">
+                      <input
+                        type="file"
+                        id="imageUpload"
+                        className={style.file}
+                        onChange={(e) => {
+                          const urlImg = URL.createObjectURL(e.target.files[0]);
+                          setFieldValue("img", urlImg, true);
+                        }}
+                      />
+                      <img src={values.img} alt={values.name} />
+                    </label>
+                  </div>
+                  <Field className={style.standard2} name="name" type="text" />
+                </div>
+                <ErrorMessage name="name" />
+                <div>
+                  <label htmlFor="">Ngày sinh</label>
+                  <Field
+                    className={style.standard1}
+                    type="date"
+                    name="birthday"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="gender">Giới tính</label>
+                  <div className={style.gender}>
+                    <div className={style.manCheckBox}>
+                      <Field
+                        className={style.standard3}
+                        type="radio"
+                        name="gender"
+                        value="Nam"
+                      />
+                      <label htmlFor="Nam">Nam</label>
                     </div>
-                    <input className = {style.standard2} type="text" value = {nameAdding}
-                     onChange = {e => dispatch(addingName(e.target.value))}/>
-                </div>
-                <div>
-                    <label htmlFor="">Ngày sinh</label>
-                    <input className = {style.standard1} type="date" 
-                    id="dateOfBirth" name="dateOfBirth" value = {birthdayAdding} 
-                    onChange = {e => dispatch(addingBirthday((e.target.value)))}/>
-                </div>
-                <div>
-                    <label htmlFor="gender">Giới tính</label>
-                    <div className = {style.gender}>
-                        <div className={style.manCheckBox}>
-                            <input className = {style.standard3} type="checkbox" 
-                            value = "Nam" onChange = {e => handleAddGender(e.target.value, e.target.checked)}/>
-                            <label htmlFor="Nam" >Nam</label>
-                        </div>
-                        <div>
-                            <input className = {style.standard3} type="checkbox" 
-                            value = "Nữ" onChange = {e => handleAddGender(e.target.value, e.target.checked)}/>
-                            <label htmlFor="Nữ" >Nữ</label>
-                        </div>
-                        
+                    <div>
+                      <Field
+                        className={style.standard3}
+                        type="radio"
+                        name="gender"
+                        value="Nữ"
+                      />
+                      <label htmlFor="Nữ">Nữ</label>
                     </div>
-                    
+                  </div>
                 </div>
                 <div>
-                    <label htmlFor="dateAdmission">Ngày nhập học</label>
-                    <input  className = {style.standard1} type="date"
-                    value = {dayAdmissionAdding}
-                    onChange = {e => dispatch(addingDayAdmission((e.target.value)))}/>
+                  <label htmlFor="dateAdmission">Ngày nhập học</label>
+                  <Field
+                    className={style.standard1}
+                    type="date"
+                    name="dayAdmission"
+                  />
                 </div>
                 <div>
-                    <label htmlFor="phoneNumber">Điện thoại</label>
-                    <input className = {style.standard1} type="text"
-                    value = {phoneNumberAdding}
-                    onChange = {e => dispatch(addingPhoneNumber((e.target.value)))}/>
+                  <label htmlFor="phoneNumber">Điện thoại</label>
+                  <Field
+                    className={style.standard1}
+                    type="text"
+                    name="phoneNumber"
+                  />
                 </div>
-                
-            </form>
-            <div className = {style.button_group}>
-                <button className = {style.add_butt} onClick = {handleSaveAdded}>Thêm</button>
-                <button className = {style.cancel_butt} onClick = {handleCancelAdding}>Huỷ</button>
-            </div>
-        </div>
-    );
+                <ErrorMessage name="phoneNumber" />
+              </form>
+              <div className={style.button_group}>
+                <button disabled={!isValid} className={style.add_butt} onClick={handleSubmit}>
+                  Thêm
+                </button>
+                <button
+                  className={style.cancel_butt}
+                  onClick={handleCancelAdding}
+                >
+                  Huỷ
+                </button>
+              </div>
+            </React.Fragment>
+          );
+        }}
+      </Formik>
+    </div>
+  );
 }

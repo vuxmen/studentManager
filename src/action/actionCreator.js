@@ -126,11 +126,11 @@ export const saveModifiedList = newStudentList => (
 )
 
 
-export const saveAddedList = newStudentList => (
+export const saveStudent = newStudent => (
     {
         type: actionType.ADD_STUDENT.SAVE,
         payload: {
-            newStudentList
+            newStudent
         }
     }
 )
