@@ -157,10 +157,9 @@ export const students = (state = initialState, action) => {
       };
     }
     case actionType.ADD_STUDENT.SAVE: {
-      const newStudentList = [
-        ...state.studentList,
-        { ...action.payload.newStudent, id: uuidv4() },
-      ];
+      const newStudent = { ...action.payload.newStudent, id: uuidv4() };
+
+      const newStudentList = [...state.studentList, newStudent];
       localStorage.setItem("updatedList", JSON.stringify(newStudentList));
       return {
         ...state,

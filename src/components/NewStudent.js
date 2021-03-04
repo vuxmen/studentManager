@@ -33,8 +33,7 @@ export default function NewStudent() {
           name: "",
           phoneNumber: "",
           birthday: "",
-          isMan: false,
-          isWoman: false,
+          gender: "",
           dayAdmission: "",
         }}
         validationSchema={Yup.object().shape({
