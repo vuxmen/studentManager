@@ -135,59 +135,8 @@ export const saveAddedList = newStudentList => (
     }
 )
 
-export const addingImg = urlImg => (
-    {
-        type: actionType.ADD_STUDENT.ADDING_IMG,
-        payload: {
-            urlImg
-        }
-    }
-)
 
-export const addingName = name => (
-    {
-        type: actionType.ADD_STUDENT.ADDING_NAME,
-        payload: {
-            name
-        }
-    }
-)
 
-export const addingPhoneNumber = phoneNumber => (
-    {
-        type: actionType.ADD_STUDENT.ADDING_PHONENUMBER,
-        payload: {
-            phoneNumber
-        }
-    }
-)
-
-export const addingDayAdmission = dayAdmission => (
-    {
-        type: actionType.ADD_STUDENT.ADDING_DAYADMISSION,
-        payload: {
-            dayAdmission
-        }
-    }
-)
-
-export const addingBirthday = birthday => (
-    {
-        type: actionType.ADD_STUDENT.ADDING_BIRTHDAY,
-        payload: {
-            birthday
-        }
-    }
-)
-
-export const addingGender = gender => (
-    {
-        type: actionType.ADD_STUDENT.ADDING_GENDER,
-        payload: {
-            gender
-        }
-    }
-)
 
 
 

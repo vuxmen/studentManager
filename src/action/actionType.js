@@ -17,12 +17,6 @@ export const actionType = {
         'SAVE': 'SAVE'
     },
     'ADD_STUDENT': {
-        'ADDING_IMG': 'ADDING_IMG',
-        'ADDING_NAME': 'ADDING_NAME',
-        'ADDING_PHONENUMBER': 'ADDING_PHONENUMBER',
-        'ADDING_BIRTHDAY': 'ADDING_BIRTHDAY',
-        'ADDING_DAYADMISSION': 'ADDING_DAYADMISSION',
-        'ADDING_GENDER': 'ADDING_GENDER',
         'CREATING_ID': 'CREATING_ID',
         'SAVE': 'SAVE'
     }    

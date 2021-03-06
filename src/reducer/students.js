@@ -8,15 +8,6 @@ const getStudentList = () => {
 }
 
 const initialState = {
-    newStudent: {
-        id: '',
-        name: '',
-        phoneNumber: '',
-        birthday: '',
-        gender: '',
-        dayAdmission: '',
-        img: './studentImg/default.png'
-    },
     studentisModified: {
         id: '',
         name: '',
@@ -103,60 +94,7 @@ export const students = (state = initialState, action) => {
                 studentList: action.payload.newStudentList
             }
         }
-        case actionType.ADD_STUDENT.ADDING_IMG: {
-            return {
-                ...state,
-                newStudent: {
-                    ...state.newStudent,
-                    img: action.payload.urlImg
-                }
-            }
-        }
-        case actionType.ADD_STUDENT.ADDING_NAME: {
-            return {
-                ...state,
-                newStudent: {
-                    ...state.newStudent,
-                    name: action.payload.name
-                }
-            }
-        }
-        case actionType.ADD_STUDENT.ADDING_PHONENUMBER: {
-            return {
-                ...state,
-                newStudent: {
-                    ...state.newStudent,
-                    phoneNumber: action.payload.phoneNumber
-                }
-            }
-        }
-        case actionType.ADD_STUDENT.ADDING_BIRTHDAY: {
-            return {
-                ...state,
-                newStudent: {
-                    ...state.newStudent,
-                    birthday: action.payload.birthday
-                }
-            }
-        }
-        case actionType.ADD_STUDENT.ADDING_DAYADMISSION: {
-            return {
-                ...state,
-                newStudent: {
-                    ...state.newStudent,
-                    dayAdmission: action.payload.dayAdmission
-                }
-            }
-        }
-        case actionType.ADD_STUDENT.ADDING_GENDER: {
-            return {
-                ...state,
-                newStudent: {
-                    ...state.newStudent,
-                    gender: action.payload.gender
-                }
-            }
-        }
+        
         case actionType.ADD_STUDENT.SAVE: {
             return {
                 ...state,

@@ -125,3 +125,10 @@
 .file {
     display: none;
 }
+
+.error {
+    margin-top: 1px;
+    text-align: left;
+    color: red;
+    font-style: italic;
+}
