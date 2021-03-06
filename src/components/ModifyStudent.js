@@ -2,127 +2,137 @@ import React from 'react';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import style from './NewStudent.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { editingImg,
-        editingName,
-        editingDayAdmission,
-        editingBirthday,
-        editingPhoneNumber,
-        editingGender,
-        saveModifiedList
-    } from '../action/actionCreator';
-import { useHistory } from 'react-router-dom';
+import { saveModifiedList } from '../action/actionCreator';
+import { useHistory, useLocation } from 'react-router-dom';
+import { useFormik } from 'formik';
+import Validation from '../studentValidate';
+
 
 export default function ModifyStudent() {
+    const studentList = useSelector(state => state.students.studentList);
     const dispatch = useDispatch();
     const history = useHistory();
-    const studentisModified = useSelector(state => state.students.studentisModified);
-    const editorName = useSelector(state => state.students.studentisModified.name);
-    const editorPhoneNumber = useSelector(state => state.students.studentisModified.phoneNumber);
-    const editorBirthday = useSelector(state => state.students.studentisModified.birthday);
-    const editorGender = useSelector(state => state.students.studentisModified.gender);
-    const editorDayAdmission = useSelector(state => state.students.studentisModified.dayAdmission);
-    const editorImg = useSelector(state => state.students.studentisModified.img);
-    const studentList = useSelector(state => state.students.studentList);
-    
-    const handleSaveModify = () => {
-        const newModifiedList = studentList.map(student =>
-            (student.id === studentisModified.id)
-                ? studentisModified : student
-            );
-        dispatch(saveModifiedList(newModifiedList));
-        localStorage.setItem('updatedList', JSON.stringify(newModifiedList));
-        history.push('/');
+    const location = useLocation();
+
+    const formik = useFormik({
+        initialValues: location.state.student,
+        validationSchema: Validation,
+        onSubmit: () => {
+            console.log(formik.values);
+            const updatedList = studentList.map(student =>
+                (student.id === formik.values.id)
+                    ? formik.values : student
+                );
+            localStorage.setItem('updatedList', JSON.stringify(updatedList));
+            dispatch(saveModifiedList(updatedList));
+            history.push('/');
+        }
+    });
+
+    const handleCancelModifying = () => {
+        if (window.confirm('Bạn có muốn huỷ chỉnh sửa học viên không ?')) {
+            history.push('/');
+        } else return
     }
 
-    const handleCancelModify = () => {
-        dispatch(editingName(''));
-        dispatch(editingBirthday(''));
-        dispatch(editingPhoneNumber(''));
-        dispatch(editingDayAdmission(''));
-        dispatch(editingGender(''));
-        dispatch(editingImg(''));
-        history.push('/');
+    const handleChangeImg = file => {
+        const urlImg = URL.createObjectURL(file);
+        formik.setFieldValue('img', urlImg);
+    }
+
+
+    const handleChangeGender = (gender, checked) => {
+        if (checked) formik.setFieldValue('gender', gender, true);
     }
 
     const checkMale = () => {
-        if (editorGender === "Nam") return true
-        else return false;
+        if (formik.values.gender === 'Nam') return true;
+        else return false 
     }
 
     const checkFemale = () => {
-        if (editorGender === "Nữ") return true;
-        else return false;
-    }
-
-    const handleUploadImage = objImg => {
-        if (objImg) {
-            const urlImg = URL.createObjectURL(objImg);
-            dispatch(editingImg(urlImg));
-            URL.revokeObjectURL(objImg);
-        } else return 
-    }
-
-    const handleChangeGender = (gender, checked) => {
-        if (checked) dispatch(editingGender(gender));
+        if (formik.values.gender === 'Nữ') return true;
+        else return false 
     }
 
     return (
         <div className = {style.newStudent}>
-            <div className = {style.topbar} onClick = {handleCancelModify}>
+            <div className = {style.topbar} onClick = {handleCancelModifying}>
                 <ArrowBackIosIcon className = {style.arrowIcon}/>
                 <h2>Danh sách</h2>
             </div>
-            <form className = {style.form}>
+            <form className = {style.form} onSubmit = {formik.handleSubmit}>
                 <div className = {style.firstContent}>
                     <div className = {style.img_container}>
                         <label htmlFor="imageUpload">
-                            <input type="file" id ="imageUpload" className={style.file} 
-                            onChange = {e => handleUploadImage(e.target.files[0])}/>
-                            <img src={editorImg} alt={editorName}/>
+                            <input type="file" id ="imageUpload" className={style.file} name = "img"
+                            onChange = {e => handleChangeImg(e.target.files[0])}/>
+                            <img src={formik.values.img} alt="Upload img"/>
                         </label>
-                        
+                        <p className = {style.error}>{formik.errors.img}</p>
                     </div>
-                    <input className = {style.standard2} type="text" value = {editorName}
-                     onChange = {e => dispatch(editingName(e.target.value))} />
+                    <div className={style.standard2} >
+                        <input name="name" type="text"
+                        value = {formik.values.name} onChange = {formik.handleChange}
+                        />
+                        <p className = {style.error}>{formik.errors.name}</p>
+                    </div>
                 </div>
-                <div>
-                    <label htmlFor="">Ngày sinh</label>
-                    <input className = {style.standard1} type="date" value = {editorBirthday}
-                     onChange = {e => dispatch(editingBirthday(e.target.value))}/>
+                <div className = {style.otherContent}>
+                    <label htmlFor="birthday">Ngày sinh</label>
+                    <div className={style.standard1}>
+                        <input  type="date" id="birthday"
+                        name="birthday" value = {formik.values.birthday}
+                        onChange = {formik.handleChange} 
+                        />
+                        <p className = {style.error}>{formik.errors.birthday}</p>
+                    </div>
                 </div>
-                <div>
+                <div className = {style.genderContent}>
                     <label htmlFor="gender">Giới tính</label>
                     <div className = {style.gender}>
-                        <div>
-                            <input className = {style.standard3} type="checkbox" checked = {checkMale()}
-                            value = "Nam" onChange = {e => handleChangeGender(e.target.value, e.target.checked)}/>
-                            <label htmlFor="Nam">Nam</label>
+                        <div className={style.standard1}>
+                            <div className = {style.genderType} >
+                                <input type="checkbox" name = "gender" checked = {checkMale()}
+                                value = "Nam" onChange = {e => handleChangeGender(e.target.value, e.target.checked)}/>
+                                <label htmlFor="Nam" >Nam</label>
+                            </div>
+                            <div className = {style.genderType}>
+                                <input type="checkbox" name = "gender" checked = {checkFemale()}
+                                value = "Nữ" onChange = {e => handleChangeGender(e.target.value, e.target.checked)}/>
+                                <label htmlFor="Nữ" >Nữ</label>
+                            </div>   
                         </div>
-                        <div>
-                            <input className = {style.standard3} type="checkbox" checked = {checkFemale()}
-                             value = "Nữ" onChange = {e => handleChangeGender(e.target.value, e.target.checked)}/>
-                            <label htmlFor="Nữ">Nữ</label>
-                        </div>
-                        
+                        <p className = {style.error}>{formik.errors.gender}</p>
                     </div>
                     
                 </div>
-                <div>
-                    <label htmlFor="dateAdmission">Ngày nhập học</label>
-                    <input  className = {style.standard1} type="date" id ="dateAdmission" name = "dateAdmission"
-                     value = {editorDayAdmission} onChange = {e => dispatch(editingDayAdmission(e.target.value))}/>
+                <div className = {style.otherContent}>
+                    <label htmlFor="dayAdmission">Ngày nhập học</label>
+                    <div className={style.standard1}>
+                        <input type="date" id="dayAdmission"
+                        value = {formik.values.dayAdmission} name = "dayAdmission"
+                        onChange = {formik.handleChange}/>
+                        <p className = {style.error}>{formik.errors.dayAdmission}</p>
+                    </div>
+                    
                 </div>
-                <div>
+                <div className = {style.otherContent}>
                     <label htmlFor="phoneNumber">Điện thoại</label>
-                    <input className = {style.standard1} type="text" 
-                    value = {editorPhoneNumber} onChange = {e => dispatch(editingPhoneNumber(e.target.value))}/>
+                    <div className={style.standard1}>
+                        <input type="text" id="phoneNumber"
+                        value = {formik.values.phoneNumber} name = "phoneNumber"
+                        onChange = {formik.handleChange}/>
+                        <p className = {style.error}>{formik.errors.phoneNumber}</p>
+                    </div>
+                </div>
+                <div className = {style.button_group}>
+                    <button type = "submit" className = {style.add_butt}>Sửa</button>
+                    <button className = {style.cancel_butt} onClick = {handleCancelModifying}>Huỷ</button>
                 </div>
                 
             </form>
-            <div className = {style.button_group}>
-                <button className = {style.add_butt} onClick = {handleSaveModify}>Sửa</button>
-                <button className = {style.cancel_butt} onClick = {handleCancelModify}>Huỷ</button>
-            </div>
+            
         </div>
     );
 }

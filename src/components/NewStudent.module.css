@@ -2,6 +2,8 @@
     height: 100vh;
     padding: 2vh 0;
 }
+
+
 .topbar {
     background-color: #66c2ff;
     color: white;
@@ -33,58 +35,111 @@
 
 .form > div {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 3vh;
+    margin-bottom: 2vh;
     width: 100%;
-    height: 5vh;
+    justify-content: flex-start;
 }
 
-.form .firstContent {
-    height: 10vh;
-    justify-content: center;
+.firstContent {
+    height: 12vh;
     align-items: center;
 }
 
 .img_container {
     height: 95%;
-    width: 25%;
+    flex: 0 0 40%;
     border-radius: 50%;
     display: inline-block;
-    margin-right: 5%;
     overflow: hidden;
     cursor: pointer;
+    position: relative;
+    
+    padding: 0 5%;
 }
 
 .img_container img {
+    position: absolute;
+    left: 0;
+    top: 0;
     cursor: pointer;
-    width: 90%;
-    margin: auto;
+    height: 100%;
+    color: green;
+    font-size: 13px;
+    text-align: center;
+    line-height: 70px;
 }
+
+.img_container label {
+    position: absolute;
+    width: 80%;
+    height: 90%;
+    cursor: pointer;
+}
+
+.img_container p {
+    position: absolute;
+    top: 50%;
+    left: 10%;
+}
+
+
+.otherContent {
+    height: 7vh;
+    align-items: flex-start;
+}
+
+.otherContent label, .genderContent label {
+    flex: 0 0 40%;
+}
+
 
 .standard1 {
     height: 100%;
-    flex: 0 0 70%;
+    flex: 0 0 60%;
+}
+
+.standard1 > input {
+    height: 70%;
+    width: 100%;
     border: 0.5px solid rgb(191, 191, 191);
-    padding-left: 2%;
+    padding-left: 5px;
+
 }
 
 .standard2 {
-    height: 50%;
+    height: 70%;
     flex: 0 0 60%;
+}
+
+.standard2 input {
     border: 0.5px solid rgb(191, 191, 191);
-    padding-left: 10px;
+    height: 50%;
+    width: 100%;
+}
+
+.starndard2 p {
+    margin: 0;
+    width: 100%;
+    flex: 0 0 40%;
+}
+
+.genderContent {
+    height: 5vh;
+    align-items: flex-start;
 }
 
 .gender {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     flex: 0 0 70%;
 }
 
 .gender > div {
-    flex: 0 0 70%;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.genderType {
+    flex: 0 0 40%;
 }
 
 .gender input {
@@ -92,11 +147,12 @@
     cursor: pointer;
 }
 
-.button_group {
+
+.form >div.button_group {
     display: flex;
     justify-content: flex-end;
-    width: 90%;
-    margin: auto;
+    width: 100%;
+    margin: 0;
 }
 
 .add_butt, .cancel_butt {
@@ -108,6 +164,7 @@
     border-radius: 2px;
     border: 1px solid grey;
     font-weight: bold;
+    padding: 0;
 }
 
 .add_butt {
@@ -127,8 +184,9 @@
 }
 
 .error {
-    margin-top: 1px;
+    margin: 5px 0 0 0;
     text-align: left;
     color: red;
     font-style: italic;
+    font-size: 13px;
 }

@@ -2,21 +2,9 @@ import React from 'react';
 import style from './StudentItem.module.css';
 import { Male, Female } from "react-gender";
 import { useHistory } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { editingBirthday,
-         editingDayAdmission,
-         editingGender,
-         editingImg,
-         editingName,
-         editingPhoneNumber,
-         passingID
-} from '../action/actionCreator';
-
-
 
 export default function StudentItem({student}) {
     const history = useHistory();
-    const dispatch = useDispatch();
     const showGender = () => {
         if (student.gender === "Nam") return (
             <Male color="#419fcf" className = {style.genderType}/>
@@ -26,14 +14,12 @@ export default function StudentItem({student}) {
     }
 
     const handleBeginModifyStudent = () => {
-        dispatch(editingBirthday(student.birthday));
-        dispatch(editingPhoneNumber(student.phoneNumber));
-        dispatch(editingImg(student.img));
-        dispatch(editingDayAdmission(student.dayAdmission));
-        dispatch(editingGender(student.gender));
-        dispatch(editingName(student.name));
-        dispatch(passingID(student.id));
-        history.push('/ModifyStudent');
+        history.push({
+            pathname: '/ModifyStudent',
+            state: {
+                student: student
+            }
+        });
     }
 
     return (

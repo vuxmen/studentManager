@@ -53,60 +53,6 @@ export const searchStudent = () => (
     }
 )
 
-export const editingImg = urlImg => (
-    {
-        type: actionType.MODIFY_STUDENT.EDITING_IMG,
-        payload: {
-            urlImg
-        }
-    }
-)
-
-export const editingName = name => (
-    {
-        type: actionType.MODIFY_STUDENT.EDITING_NAME,
-        payload: {
-            name
-        }
-    }
-)
-
-export const editingPhoneNumber = phoneNumber => (
-    {
-        type: actionType.MODIFY_STUDENT.EDITING_PHONENUMBER,
-        payload: {
-            phoneNumber
-        }
-    }
-)
-
-export const editingBirthday = birthday => (
-    {
-        type: actionType.MODIFY_STUDENT.EDITING_BIRTHDAY,
-        payload: {
-            birthday
-        }
-    }
-)
-
-export const editingDayAdmission = dayAdmission => (
-    {
-        type: actionType.MODIFY_STUDENT.EDITING_DAYADMISSION,
-        payload: {
-            dayAdmission
-        }
-    }
-)
-
-export const editingGender = gender => (
-    {
-        type: actionType.MODIFY_STUDENT.EDITING_GENDER,
-        payload: {
-            gender
-        }
-    }
-)
-
 export const passingID = id => (
     {
         type: actionType.MODIFY_STUDENT.PASSING_ID,
