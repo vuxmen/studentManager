@@ -64,7 +64,7 @@ export default function NewStudent() {
           name: Yup.string()
             .required("Vui lòng nhập tên")
             .matches(
-              /^[^`~!@#$%^&*()_+={}\[\]|\\:;“’<,>.?๐฿]*$/,
+              /^[^`~!@#$%^&*()_+={}[\]|\\:;“’<,>.?๐฿]*$/,
               "Tên không được chứa ký tự đặc biệt"
             ),
           phoneNumber: Yup.string()
