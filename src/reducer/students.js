@@ -10,17 +10,7 @@ const getStudentList = () => {
 };
 
 const initialState = {
-  newStudent: {
-    id: "",
-    name: "",
-    phoneNumber: "",
-    birthday: "",
-    gender: "",
-    dayAdmission: "",
-    img: Utils.getAvatarUrlFromFileName("default.png"),
-  },
-  studentList: getStudentList(),
-  totalStudent: getStudentList().length,
+  studentList: getStudentList()
 };
 
 export const students = (state = initialState, action) => {
