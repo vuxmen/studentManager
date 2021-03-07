@@ -1,6 +1,7 @@
 import React from "react";
-
+import { Modal, Button, Space } from "antd";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import style from "./NewStudent.module.css";
 import { Formik, Field, ErrorMessage } from "formik";
 import { useDispatch } from "react-redux";
@@ -8,6 +9,26 @@ import { saveStudent } from "../action/actionCreator";
 import { useHistory } from "react-router-dom";
 import { Utils } from "../utils/Utils";
 import * as Yup from "yup";
+
+const { confirm } = Modal;
+
+function showConfirm(onOk, onCancel) {
+  confirm({
+    title: "Bạn có thực sự muốn huỷ?",
+    icon: <ExclamationCircleOutlined />,
+    content: "Các thay đổi sẽ không được lưu",
+    okType: "default",
+    cancelButtonProps: {
+      type: "primary",
+    },
+    onOk() {
+      onOk();
+    },
+    onCancel() {
+      onCancel();
+    },
+  });
+}
 
 export default function NewStudent() {
   const dispatch = useDispatch();
@@ -18,16 +39,17 @@ export default function NewStudent() {
     history.push("/");
   };
 
-  const handleCancelAdding = () => {
-    history.push("/");
+  const handleCancelAdding = (dirty) => {
+    if (!dirty) history.push("/");
+    else
+      showConfirm(
+        () => history.push("/"),
+        () => {}
+      );
   };
 
   return (
     <div className={style.newStudent}>
-      <div className={style.topbar} onClick={handleCancelAdding}>
-        <ArrowBackIosIcon className={style.arrowIcon} />
-        <h2>Danh sách</h2>
-      </div>
       <Formik
         initialValues={{
           img: "default.png",
@@ -38,23 +60,35 @@ export default function NewStudent() {
           dayAdmission: "",
         }}
         validationSchema={Yup.object().shape({
-          phoneNumber: Yup.string().required("Vui lòng nhập số điện thoại"),
+          img: Yup.string().required(),
+          name: Yup.string()
+            .required("Vui lòng nhập tên")
+            .matches(
+              /^[^`~!@#$%^&*()_+={}\[\]|\\:;“’<,>.?๐฿]*$/,
+              "Tên không được chứa ký tự đặc biệt"
+            ),
+          phoneNumber: Yup.string()
+            .required("Vui lòng nhập số điện thoại")
+            .matches(
+              /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/,
+              "Số điện thoại không hợp lệ "
+            ),
+          birthday: Yup.string().required("Vui lòng nhập ngày sinh"),
           gender: Yup.string().required("Vui lòng chọn giới tính"),
+          dayAdmission: Yup.string().required("Vui lòng chọn ngày nhập học"),
         })}
-        validate={(values) => {
-          const errors = {};
-
-          if (!values.name) {
-            errors.name = "Vui lòng nhập tên";
-          }
-
-          return errors;
-        }}
         onSubmit={handleSaveAdded}
       >
-        {({ values, setFieldValue, handleSubmit, isValid }) => {
+        {({ values, setFieldValue, handleSubmit, isValid, dirty }) => {
           return (
             <React.Fragment>
+              <div
+                className={style.topbar}
+                onClick={() => handleCancelAdding(dirty)}
+              >
+                <ArrowBackIosIcon className={style.arrowIcon} />
+                <h2>Danh sách</h2>
+              </div>
               <form className={style.form}>
                 <div className={style.firstContent}>
                   <div className={style.img_container}>
@@ -85,6 +119,7 @@ export default function NewStudent() {
                     name="birthday"
                   />
                 </div>
+                <ErrorMessage name="birthday" />
                 <div>
                   <label htmlFor="gender">Giới tính</label>
                   <div className={style.gender}>
@@ -117,6 +152,7 @@ export default function NewStudent() {
                     name="dayAdmission"
                   />
                 </div>
+                <ErrorMessage name="dayAdmission" />
                 <div>
                   <label htmlFor="phoneNumber">Điện thoại</label>
                   <Field
@@ -128,19 +164,16 @@ export default function NewStudent() {
                 <ErrorMessage name="phoneNumber" />
               </form>
               <div className={style.button_group}>
-                <button
-                  disabled={!isValid}
-                  className={style.add_butt}
-                  onClick={handleSubmit}
-                >
-                  Thêm
-                </button>
-                <button
-                  className={style.cancel_butt}
-                  onClick={handleCancelAdding}
-                >
-                  Huỷ
-                </button>
+                <Space>
+                  <Button
+                    disabled={!isValid}
+                    type="primary"
+                    onClick={handleSubmit}
+                  >
+                    Thêm
+                  </Button>
+                  <Button onClick={() => handleCancelAdding(dirty)}>Huỷ</Button>
+                </Space>
               </div>
             </React.Fragment>
           );

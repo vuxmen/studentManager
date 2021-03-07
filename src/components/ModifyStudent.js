@@ -1,15 +1,35 @@
 import React from "react";
+import { Modal, Button, Space } from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import style from "./NewStudent.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import * as Yup from "yup";
-import {
-  editStudent,
-} from "../action/actionCreator";
+import { editStudent } from "../action/actionCreator";
 import { useHistory } from "react-router-dom";
-import { Field, Formik } from "formik";
+import { ErrorMessage, Field, Formik } from "formik";
 import { Utils } from "../utils/Utils";
+
+const { confirm } = Modal;
+
+function showConfirm(onOk, onCancel) {
+  confirm({
+    title: "Bạn có thực sự muốn huỷ?",
+    icon: <ExclamationCircleOutlined />,
+    content: "Các thay đổi sẽ không được lưu",
+    okType: "default",
+    cancelButtonProps: {
+      type: "primary",
+    },
+    onOk() {
+      onOk();
+    },
+    onCancel() {
+      onCancel();
+    },
+  });
+}
 
 export default function ModifyStudent(props) {
   const studentId = useParams().id;
@@ -17,7 +37,6 @@ export default function ModifyStudent(props) {
   const student = useSelector((state) =>
     state.students.studentList.find((s) => s.id === studentId)
   );
-  
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -27,36 +46,49 @@ export default function ModifyStudent(props) {
     history.push("/");
   };
 
-  const handleCancelModify = () => {
-    history.push("/");
+  const handleCancelModify = (dirty) => {
+    if (!dirty) history.push("/");
+    else
+      showConfirm(
+        () => history.push("/"),
+        () => {}
+      );
   };
 
   return (
     <div className={style.newStudent}>
-      <div className={style.topbar} onClick={handleCancelModify}>
-        <ArrowBackIosIcon className={style.arrowIcon} />
-        <h2>Danh sách</h2>
-      </div>
       <Formik
         initialValues={{ ...student }}
         validationSchema={Yup.object().shape({
-          phoneNumber: Yup.string().required("Vui lòng nhập số điện thoại"),
+          img: Yup.string().required(),
+          name: Yup.string()
+            .required("Vui lòng nhập tên")
+            .matches(
+              /^[^`~!@#$%^&*()_+={}[\]|\\:;“’<,>.?๐฿]*$/,
+              "Tên không được chứa ký tự đặc biệt"
+            ),
+          phoneNumber: Yup.string()
+            .required("Vui lòng nhập số điện thoại")
+            .matches(
+              /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/,
+              "Số điện thoại không hợp lệ "
+            ),
+          birthday: Yup.string().required("Vui lòng nhập ngày sinh"),
           gender: Yup.string().required("Vui lòng chọn giới tính"),
+          dayAdmission: Yup.string().required("Vui lòng chọn ngày nhập học"),
         })}
-        validate={(values) => {
-          const errors = {};
-
-          if (!values.name) {
-            errors.name = "Vui lòng nhập tên";
-          }
-
-          return errors;
-        }}
         onSubmit={handleSaveStudent}
       >
-        {({ values, setFieldValue, handleSubmit, isValid }) => {
+        {({ values, setFieldValue, handleSubmit, isValid, dirty }) => {
           return (
             <React.Fragment>
+              <div
+                className={style.topbar}
+                onClick={() => handleCancelModify(dirty)}
+              >
+                <ArrowBackIosIcon className={style.arrowIcon} />
+                <h2>Danh sách</h2>
+              </div>
               <form className={style.form}>
                 <div className={style.firstContent}>
                   <div className={style.img_container}>
@@ -70,11 +102,15 @@ export default function ModifyStudent(props) {
                           setFieldValue("img", urlImg, true);
                         }}
                       />
-                      <img src={Utils.getAvatarUrlFromFileName(values.img)} alt={values.name} />
+                      <img
+                        src={Utils.getAvatarUrlFromFileName(values.img)}
+                        alt={values.name}
+                      />
                     </label>
                   </div>
                   <Field className={style.standard2} type="text" name="name" />
                 </div>
+                <ErrorMessage name="name" />
                 <div>
                   <label htmlFor="">Ngày sinh</label>
                   <Field
@@ -83,6 +119,7 @@ export default function ModifyStudent(props) {
                     name="birthday"
                   />
                 </div>
+                <ErrorMessage name="birthday" />
                 <div>
                   <label htmlFor="gender">Giới tính</label>
                   <div className={style.gender}>
@@ -106,6 +143,7 @@ export default function ModifyStudent(props) {
                     </div>
                   </div>
                 </div>
+                <ErrorMessage name="gender" />
                 <div>
                   <label htmlFor="dateAdmission">Ngày nhập học</label>
                   <Field
@@ -114,6 +152,7 @@ export default function ModifyStudent(props) {
                     name="dayAdmission"
                   />
                 </div>
+                <ErrorMessage name="dayAdmission" />
                 <div>
                   <label htmlFor="phoneNumber">Điện thoại</label>
                   <Field
@@ -122,17 +161,25 @@ export default function ModifyStudent(props) {
                     name="phoneNumber"
                   />
                 </div>
+                <ErrorMessage name="phoneNumber" />
               </form>
               <div className={style.button_group}>
-                <button className={style.add_butt} disabled={!isValid} onClick={handleSubmit}>
-                  Sửa
-                </button>
-                <button
-                  className={style.cancel_butt}
-                  onClick={handleCancelModify}
-                >
-                  Huỷ
-                </button>
+                <Space>
+                  <Button
+                    type="primary"
+                    className={style.add_butt}
+                    disabled={!isValid}
+                    onClick={handleSubmit}
+                  >
+                    Sửa
+                  </Button>
+                  <Button
+                    className={style.cancel_butt}
+                    onClick={() => handleCancelModify(dirty)}
+                  >
+                    Huỷ
+                  </Button>
+                </Space>
               </div>
             </React.Fragment>
           );

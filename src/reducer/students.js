@@ -1,6 +1,5 @@
 import studentData from "../studentData";
 import { actionType } from "../action/actionType";
-import { Utils } from "../utils/Utils";
 import { v4 as uuidv4 } from "uuid";
 
 const getStudentList = () => {
