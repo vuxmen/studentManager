@@ -46,13 +46,6 @@ export const changeSearchingValue = value => (
     }
 )
 
-export const searchStudent = () => (
-    {
-        type: actionType.SEARCH_STUDENT,
-        payload: {}
-    }
-)
-
 export const editStudent = modifiedStudent => (
     {
         type: actionType.MODIFY_STUDENT.SAVE,

@@ -52,12 +52,6 @@ export const pagination = (state = {
             }
          
         }
-        case actionType.SEARCH_STUDENT: {
-            return {
-                ...state,
-                currentPage: 1,
-            }
-        }
 
         default: return state;
     }
