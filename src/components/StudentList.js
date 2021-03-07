@@ -2,13 +2,12 @@ import React from "react";
 import style from "./StudentList.module.css";
 import StudentItem from "./StudentItem";
 import { useSelector } from "react-redux";
+import { appConstants } from "../constants";
 
 export default function StudentList() {
   const studentList = useSelector((state) => state.students.studentList);
   const currentPage = useSelector((state) => state.pagination.currentPage);
   const searchValue = useSelector((state) => state.search.searchValue);
-
-  const pageSize = 5;
 
   const studentMatchSearch = studentList
     .filter(
@@ -16,7 +15,10 @@ export default function StudentList() {
         student.name.includes(searchValue) ||
         student.phoneNumber.includes(searchValue)
     )
-    .slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    .slice(
+      (currentPage - 1) * appConstants.pageSize,
+      currentPage * appConstants.pageSize
+    );
 
   const renderStudentList = () =>
     studentMatchSearch.map((student) => (
