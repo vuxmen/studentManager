@@ -17,7 +17,7 @@ export default function App() {
         <Switch>
           <Route path = "/" exact component = {Home} />
           <Route path = "/NewStudent" component = {NewStudent} />
-          <Route path = "/ModifyStudent" component = {ModifyStudent}/>
+          <Route path = "/ModifyStudent/:id" component = {ModifyStudent}/>
         </Switch>
       </Router>
     </div>

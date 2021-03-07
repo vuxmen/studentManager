@@ -6,6 +6,7 @@ import { Formik, Field, ErrorMessage } from "formik";
 import { useDispatch } from "react-redux";
 import { saveStudent } from "../action/actionCreator";
 import { useHistory } from "react-router-dom";
+import { Utils } from "../utils/Utils";
 import * as Yup from "yup";
 
 export default function NewStudent() {
@@ -29,7 +30,7 @@ export default function NewStudent() {
       </div>
       <Formik
         initialValues={{
-          img: "./studentImg/default.png",
+          img: "default.png",
           name: "",
           phoneNumber: "",
           birthday: "",
@@ -38,6 +39,7 @@ export default function NewStudent() {
         }}
         validationSchema={Yup.object().shape({
           phoneNumber: Yup.string().required("Vui lòng nhập số điện thoại"),
+          gender: Yup.string().required("Vui lòng chọn giới tính"),
         })}
         validate={(values) => {
           const errors = {};
@@ -66,7 +68,10 @@ export default function NewStudent() {
                           setFieldValue("img", urlImg, true);
                         }}
                       />
-                      <img src={values.img} alt={values.name} />
+                      <img
+                        src={Utils.getAvatarUrlFromFileName(values.img)}
+                        alt={values.name}
+                      />
                     </label>
                   </div>
                   <Field className={style.standard2} name="name" type="text" />
@@ -103,6 +108,7 @@ export default function NewStudent() {
                     </div>
                   </div>
                 </div>
+                <ErrorMessage name="gender" />
                 <div>
                   <label htmlFor="dateAdmission">Ngày nhập học</label>
                   <Field
@@ -122,7 +128,11 @@ export default function NewStudent() {
                 <ErrorMessage name="phoneNumber" />
               </form>
               <div className={style.button_group}>
-                <button disabled={!isValid} className={style.add_butt} onClick={handleSubmit}>
+                <button
+                  disabled={!isValid}
+                  className={style.add_butt}
+                  onClick={handleSubmit}
+                >
                   Thêm
                 </button>
                 <button

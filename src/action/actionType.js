@@ -14,7 +14,7 @@ export const actionType = {
         'EDITING_DAYADMISSION': 'EDITING_DAYADMISSION',
         'EDITING_GENDER': 'EDITING_GENDER',
         'PASSING_ID': 'PASSING_ID',
-        'SAVE': 'SAVE'
+        'SAVE': 'EDIT_STUDENT'
     },
     'ADD_STUDENT': {
         'ADDING_IMG': 'ADDING_IMG',

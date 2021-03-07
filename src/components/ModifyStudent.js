@@ -1,128 +1,143 @@
-import React from 'react';
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import style from './NewStudent.module.css';
-import { useDispatch, useSelector } from 'react-redux';
-import { editingImg,
-        editingName,
-        editingDayAdmission,
-        editingBirthday,
-        editingPhoneNumber,
-        editingGender,
-        saveModifiedList
-    } from '../action/actionCreator';
-import { useHistory } from 'react-router-dom';
+import React from "react";
+import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
+import style from "./NewStudent.module.css";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import * as Yup from "yup";
+import {
+  editStudent,
+} from "../action/actionCreator";
+import { useHistory } from "react-router-dom";
+import { Field, Formik } from "formik";
+import { Utils } from "../utils/Utils";
 
-export default function ModifyStudent() {
-    const dispatch = useDispatch();
-    const history = useHistory();
-    const studentisModified = useSelector(state => state.students.studentisModified);
-    const editorName = useSelector(state => state.students.studentisModified.name);
-    const editorPhoneNumber = useSelector(state => state.students.studentisModified.phoneNumber);
-    const editorBirthday = useSelector(state => state.students.studentisModified.birthday);
-    const editorGender = useSelector(state => state.students.studentisModified.gender);
-    const editorDayAdmission = useSelector(state => state.students.studentisModified.dayAdmission);
-    const editorImg = useSelector(state => state.students.studentisModified.img);
-    const studentList = useSelector(state => state.students.studentList);
-    
-    const handleSaveModify = () => {
-        const newModifiedList = studentList.map(student =>
-            (student.id === studentisModified.id)
-                ? studentisModified : student
-            );
-        dispatch(saveModifiedList(newModifiedList));
-        localStorage.setItem('updatedList', JSON.stringify(newModifiedList));
-        history.push('/');
-    }
+export default function ModifyStudent(props) {
+  const studentId = useParams().id;
 
-    const handleCancelModify = () => {
-        dispatch(editingName(''));
-        dispatch(editingBirthday(''));
-        dispatch(editingPhoneNumber(''));
-        dispatch(editingDayAdmission(''));
-        dispatch(editingGender(''));
-        dispatch(editingImg(''));
-        history.push('/');
-    }
+  const student = useSelector((state) =>
+    state.students.studentList.find((s) => s.id === studentId)
+  );
+  
 
-    const checkMale = () => {
-        if (editorGender === "Nam") return true
-        else return false;
-    }
+  const dispatch = useDispatch();
+  const history = useHistory();
 
-    const checkFemale = () => {
-        if (editorGender === "Nữ") return true;
-        else return false;
-    }
+  const handleSaveStudent = (values) => {
+    dispatch(editStudent(values));
+    history.push("/");
+  };
 
-    const handleUploadImage = objImg => {
-        if (objImg) {
-            const urlImg = URL.createObjectURL(objImg);
-            dispatch(editingImg(urlImg));
-            URL.revokeObjectURL(objImg);
-        } else return 
-    }
+  const handleCancelModify = () => {
+    history.push("/");
+  };
 
-    const handleChangeGender = (gender, checked) => {
-        if (checked) dispatch(editingGender(gender));
-    }
+  return (
+    <div className={style.newStudent}>
+      <div className={style.topbar} onClick={handleCancelModify}>
+        <ArrowBackIosIcon className={style.arrowIcon} />
+        <h2>Danh sách</h2>
+      </div>
+      <Formik
+        initialValues={{ ...student }}
+        validationSchema={Yup.object().shape({
+          phoneNumber: Yup.string().required("Vui lòng nhập số điện thoại"),
+          gender: Yup.string().required("Vui lòng chọn giới tính"),
+        })}
+        validate={(values) => {
+          const errors = {};
 
-    return (
-        <div className = {style.newStudent}>
-            <div className = {style.topbar} onClick = {handleCancelModify}>
-                <ArrowBackIosIcon className = {style.arrowIcon}/>
-                <h2>Danh sách</h2>
-            </div>
-            <form className = {style.form}>
-                <div className = {style.firstContent}>
-                    <div className = {style.img_container}>
-                        <label htmlFor="imageUpload">
-                            <input type="file" id ="imageUpload" className={style.file} 
-                            onChange = {e => handleUploadImage(e.target.files[0])}/>
-                            <img src={editorImg} alt={editorName}/>
-                        </label>
-                        
+          if (!values.name) {
+            errors.name = "Vui lòng nhập tên";
+          }
+
+          return errors;
+        }}
+        onSubmit={handleSaveStudent}
+      >
+        {({ values, setFieldValue, handleSubmit }) => {
+          return (
+            <React.Fragment>
+              <form className={style.form}>
+                <div className={style.firstContent}>
+                  <div className={style.img_container}>
+                    <label htmlFor="imageUpload">
+                      <input
+                        type="file"
+                        id="imageUpload"
+                        className={style.file}
+                        onChange={(e) => {
+                          const urlImg = URL.createObjectURL(e.target.files[0]);
+                          setFieldValue("img", urlImg, true);
+                        }}
+                      />
+                      <img src={Utils.getAvatarUrlFromFileName(values.img)} alt={values.name} />
+                    </label>
+                  </div>
+                  <Field className={style.standard2} type="text" name="name" />
+                </div>
+                <div>
+                  <label htmlFor="">Ngày sinh</label>
+                  <Field
+                    className={style.standard1}
+                    type="date"
+                    name="birthday"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="gender">Giới tính</label>
+                  <div className={style.gender}>
+                    <div className={style.manCheckBox}>
+                      <Field
+                        className={style.standard3}
+                        type="radio"
+                        name="gender"
+                        value="Nam"
+                      />
+                      <label htmlFor="Nam">Nam</label>
                     </div>
-                    <input className = {style.standard2} type="text" value = {editorName}
-                     onChange = {e => dispatch(editingName(e.target.value))} />
-                </div>
-                <div>
-                    <label htmlFor="">Ngày sinh</label>
-                    <input className = {style.standard1} type="date" value = {editorBirthday}
-                     onChange = {e => dispatch(editingBirthday(e.target.value))}/>
-                </div>
-                <div>
-                    <label htmlFor="gender">Giới tính</label>
-                    <div className = {style.gender}>
-                        <div>
-                            <input className = {style.standard3} type="checkbox" checked = {checkMale()}
-                            value = "Nam" onChange = {e => handleChangeGender(e.target.value, e.target.checked)}/>
-                            <label htmlFor="Nam">Nam</label>
-                        </div>
-                        <div>
-                            <input className = {style.standard3} type="checkbox" checked = {checkFemale()}
-                             value = "Nữ" onChange = {e => handleChangeGender(e.target.value, e.target.checked)}/>
-                            <label htmlFor="Nữ">Nữ</label>
-                        </div>
-                        
+                    <div>
+                      <Field
+                        className={style.standard3}
+                        type="radio"
+                        name="gender"
+                        value="Nữ"
+                      />
+                      <label htmlFor="Nữ">Nữ</label>
                     </div>
-                    
+                  </div>
                 </div>
                 <div>
-                    <label htmlFor="dateAdmission">Ngày nhập học</label>
-                    <input  className = {style.standard1} type="date" id ="dateAdmission" name = "dateAdmission"
-                     value = {editorDayAdmission} onChange = {e => dispatch(editingDayAdmission(e.target.value))}/>
+                  <label htmlFor="dateAdmission">Ngày nhập học</label>
+                  <Field
+                    className={style.standard1}
+                    type="date"
+                    name="dayAdmission"
+                  />
                 </div>
                 <div>
-                    <label htmlFor="phoneNumber">Điện thoại</label>
-                    <input className = {style.standard1} type="text" 
-                    value = {editorPhoneNumber} onChange = {e => dispatch(editingPhoneNumber(e.target.value))}/>
+                  <label htmlFor="phoneNumber">Điện thoại</label>
+                  <Field
+                    className={style.standard1}
+                    type="text"
+                    name="phoneNumber"
+                  />
                 </div>
-                
-            </form>
-            <div className = {style.button_group}>
-                <button className = {style.add_butt} onClick = {handleSaveModify}>Sửa</button>
-                <button className = {style.cancel_butt} onClick = {handleCancelModify}>Huỷ</button>
-            </div>
-        </div>
-    );
+              </form>
+              <div className={style.button_group}>
+                <button className={style.add_butt} onClick={handleSubmit}>
+                  Sửa
+                </button>
+                <button
+                  className={style.cancel_butt}
+                  onClick={handleCancelModify}
+                >
+                  Huỷ
+                </button>
+              </div>
+            </React.Fragment>
+          );
+        }}
+      </Formik>
+    </div>
+  );
 }

@@ -116,11 +116,11 @@ export const passingID = id => (
     }
 )
 
-export const saveModifiedList = newStudentList => (
+export const editStudent = modifiedStudent => (
     {
         type: actionType.MODIFY_STUDENT.SAVE,
         payload: {
-            newStudentList
+            modifiedStudent
         }
     }
 )

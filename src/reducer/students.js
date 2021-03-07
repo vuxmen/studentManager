@@ -1,5 +1,6 @@
 import studentData from "../studentData";
 import { actionType } from "../action/actionType";
+import { Utils } from "../utils/Utils";
 import { v4 as uuidv4 } from "uuid";
 
 const getStudentList = () => {
@@ -16,7 +17,7 @@ const initialState = {
     birthday: "",
     gender: "",
     dayAdmission: "",
-    img: "./studentImg/default.png",
+    img: Utils.getAvatarUrlFromFileName("default.png"),
   },
   studentisModified: {
     id: "",
@@ -97,9 +98,15 @@ export const students = (state = initialState, action) => {
       };
     }
     case actionType.MODIFY_STUDENT.SAVE: {
+      const modifiedStudent = action.payload.modifiedStudent;
+
+      const newStudentList = state.studentList.map((s) =>
+        s.id === modifiedStudent.id ? modifiedStudent : s
+      );
+      localStorage.setItem("updatedList", JSON.stringify(newStudentList));
       return {
         ...state,
-        studentList: action.payload.newStudentList,
+        studentList: newStudentList,
       };
     }
     case actionType.ADD_STUDENT.ADDING_IMG: {
