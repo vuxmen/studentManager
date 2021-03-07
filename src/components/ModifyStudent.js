@@ -54,7 +54,7 @@ export default function ModifyStudent(props) {
         }}
         onSubmit={handleSaveStudent}
       >
-        {({ values, setFieldValue, handleSubmit }) => {
+        {({ values, setFieldValue, handleSubmit, isValid }) => {
           return (
             <React.Fragment>
               <form className={style.form}>
@@ -124,7 +124,7 @@ export default function ModifyStudent(props) {
                 </div>
               </form>
               <div className={style.button_group}>
-                <button className={style.add_butt} onClick={handleSubmit}>
+                <button className={style.add_butt} disabled={!isValid} onClick={handleSubmit}>
                   Sửa
                 </button>
                 <button
