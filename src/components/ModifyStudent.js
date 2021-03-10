@@ -10,6 +10,7 @@ import { editStudent } from "../action/actionCreator";
 import { useHistory } from "react-router-dom";
 import { ErrorMessage, Field, Formik } from "formik";
 import { Utils } from "../utils/Utils";
+import Avatar from "antd/lib/avatar/avatar";
 
 const { confirm } = Modal;
 
@@ -58,7 +59,7 @@ export default function ModifyStudent(props) {
   return (
     <div className={style.newStudent}>
       <Formik
-        initialValues={{ ...student }}
+        initialValues={{ ...student, gender: student.gender.toString() }}
         validationSchema={Yup.object().shape({
           img: Yup.string().required(),
           name: Yup.string()
@@ -77,6 +78,7 @@ export default function ModifyStudent(props) {
           gender: Yup.string().required("Vui lòng chọn giới tính"),
           dayAdmission: Yup.string().required("Vui lòng chọn ngày nhập học"),
         })}
+        validateOnMount={true}
         onSubmit={handleSaveStudent}
       >
         {({ values, setFieldValue, handleSubmit, isValid, dirty }) => {
@@ -102,10 +104,7 @@ export default function ModifyStudent(props) {
                           setFieldValue("img", urlImg, true);
                         }}
                       />
-                      <img
-                        src={Utils.getAvatarUrlFromFileName(values.img)}
-                        alt={values.name}
-                      />
+                      <Avatar size={70} src={values.img} />
                     </label>
                   </div>
                   <Field className={style.standard2} type="text" name="name" />
@@ -128,7 +127,7 @@ export default function ModifyStudent(props) {
                         className={style.standard3}
                         type="radio"
                         name="gender"
-                        value="Nam"
+                        value="1"
                       />
                       <label htmlFor="Nam">Nam</label>
                     </div>
@@ -137,7 +136,7 @@ export default function ModifyStudent(props) {
                         className={style.standard3}
                         type="radio"
                         name="gender"
-                        value="Nữ"
+                        value="2"
                       />
                       <label htmlFor="Nữ">Nữ</label>
                     </div>

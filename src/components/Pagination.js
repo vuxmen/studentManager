@@ -7,14 +7,8 @@ import { Pagination } from "antd";
 
 export default function PaginationCpn() {
   const currentPage = useSelector((state) => state.pagination.currentPage);
-  const searchValue = useSelector((state) => state.search.searchValue);
-  const studentList = useSelector((state) => state.students.studentList);
 
-  const totalMatch = studentList.filter(
-    (student) =>
-      student.name.includes(searchValue) ||
-      student.phoneNumber.includes(searchValue)
-  ).length;
+  const totalMatch = useSelector(state => state.students.totalItem);
 
   const dispatch = useDispatch();
 
@@ -25,7 +19,7 @@ export default function PaginationCpn() {
   return (
     <div className={style.pages}>
       <Pagination
-        defaultCurrent={currentPage}
+        current={currentPage}
         total={totalMatch}
         pageSize={appConstants.pageSize}
         onChange={handleMoveExactlyToPage}

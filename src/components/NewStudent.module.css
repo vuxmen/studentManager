@@ -48,19 +48,18 @@
 }
 
 .img_container {
-    height: 95%;
     width: 25%;
-    border-radius: 50%;
     display: inline-block;
     margin-right: 5%;
     overflow: hidden;
-    cursor: pointer;
 }
 
-.img_container img {
+.img_container > div {
+    height: 100%;
+}
+
+.img_container span {
     cursor: pointer;
-    width: 90%;
-    margin: auto;
 }
 
 .standard1 {

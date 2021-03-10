@@ -1,15 +1,11 @@
-import studentData from "../studentData";
 import { actionType } from "../action/actionType";
 import { v4 as uuidv4 } from "uuid";
 
-const getStudentList = () => {
-  const localList = localStorage.getItem("updatedList");
-  if (localList) return JSON.parse(localList);
-  else return studentData;
-};
-
 const initialState = {
-  studentList: getStudentList()
+  isLoading: false,
+  isError: false,
+  studentList: [],
+  totalItem: 0
 };
 
 export const students = (state = initialState, action) => {
@@ -34,6 +30,30 @@ export const students = (state = initialState, action) => {
       return {
         ...state,
         studentList: newStudentList,
+      };
+    }
+    case actionType.START_REFRESH_STUDENT_LIST: {
+      return {
+        ...state,
+        isLoading: true,
+        isError: false,
+        studentList: [],
+      };
+    }
+    case actionType.REFRESH_STUDENT_LIST_SUCCESS: {
+      return {
+        ...state,
+        isLoading: false,
+        isError: false,
+        studentList: action.payload.students,
+        totalItem: action.payload.totalItem
+      };
+    }
+    case actionType.REFRESH_STUDENT_LIST_FAIL: {
+      return {
+        ...state,
+        isLoading: false,
+        isError: true,
       };
     }
     default:

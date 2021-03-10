@@ -9,6 +9,8 @@ import { saveStudent } from "../action/actionCreator";
 import { useHistory } from "react-router-dom";
 import { Utils } from "../utils/Utils";
 import * as Yup from "yup";
+import { addStudent } from "../studentService";
+import Avatar from "antd/lib/avatar/avatar";
 
 const { confirm } = Modal;
 
@@ -34,7 +36,10 @@ export default function NewStudent() {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const handleSaveAdded = (values) => {
+  const handleSaveAdded = async (values) => {
+    await addStudent(values);
+    return;
+
     dispatch(saveStudent(values));
     history.push("/");
   };
@@ -52,7 +57,8 @@ export default function NewStudent() {
     <div className={style.newStudent}>
       <Formik
         initialValues={{
-          img: "default.png",
+          img: Utils.getAvatarUrlFromFileName("default.jpeg"),
+          imageFile: null,
           name: "",
           phoneNumber: "",
           birthday: "",
@@ -77,6 +83,7 @@ export default function NewStudent() {
           gender: Yup.string().required("Vui lòng chọn giới tính"),
           dayAdmission: Yup.string().required("Vui lòng chọn ngày nhập học"),
         })}
+        validateOnMount={true}
         onSubmit={handleSaveAdded}
       >
         {({ values, setFieldValue, handleSubmit, isValid, dirty }) => {
@@ -100,12 +107,10 @@ export default function NewStudent() {
                         onChange={(e) => {
                           const urlImg = URL.createObjectURL(e.target.files[0]);
                           setFieldValue("img", urlImg, true);
+                          setFieldValue("imageFile", e.target.files[0]);
                         }}
                       />
-                      <img
-                        src={Utils.getAvatarUrlFromFileName(values.img)}
-                        alt={values.name}
-                      />
+                      <Avatar size={70} src={values.img} />
                     </label>
                   </div>
                   <Field className={style.standard2} name="name" type="text" />
@@ -128,7 +133,7 @@ export default function NewStudent() {
                         className={style.standard3}
                         type="radio"
                         name="gender"
-                        value="Nam"
+                        value="1"
                       />
                       <label htmlFor="Nam">Nam</label>
                     </div>
@@ -137,7 +142,7 @@ export default function NewStudent() {
                         className={style.standard3}
                         type="radio"
                         name="gender"
-                        value="Nữ"
+                        value="2"
                       />
                       <label htmlFor="Nữ">Nữ</label>
                     </div>
