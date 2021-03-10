@@ -13,6 +13,11 @@
 
 .studentItem .img_container {
     flex: 0 0 15%;
+    height: 100%;
+}
+
+.studentItem .img_container img {
+    height: 100%;
 }
 
 

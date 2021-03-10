@@ -7,7 +7,7 @@ import { Utils } from "../utils/Utils";
 export default function StudentItem({ student }) {
   const history = useHistory();
   const showGender = () => {
-    if (student.gender === "Nam")
+    if (student.gender === 1)
       return <Male color="#419fcf" className={style.genderType} />;
     else return <Female color="#f378ac" className={style.genderType} />;
   };

@@ -5,10 +5,11 @@ import { ExclamationCircleOutlined } from "@ant-design/icons";
 import style from "./NewStudent.module.css";
 import { Formik, Field, ErrorMessage } from "formik";
 import { useDispatch } from "react-redux";
-import { saveStudent } from "../action/actionCreator";
+import { reloadPage } from "../action/actionCreator";
 import { useHistory } from "react-router-dom";
 import { Utils } from "../utils/Utils";
 import * as Yup from "yup";
+import { addStudent } from '../studentService';
 
 const { confirm } = Modal;
 
@@ -34,9 +35,14 @@ export default function NewStudent() {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const handleSaveAdded = (values) => {
-    dispatch(saveStudent(values));
-    history.push("/");
+  const handleSaveAdded = async values => {
+      try {
+        await addStudent(values);
+        dispatch(reloadPage());
+        history.push('/');
+      } catch (err) {
+        console.log(err);
+      }
   };
 
   const handleCancelAdding = (dirty) => {
@@ -48,11 +54,13 @@ export default function NewStudent() {
       );
   };
 
+  
+
   return (
     <div className={style.newStudent}>
       <Formik
         initialValues={{
-          img: "default.png",
+          img: "default.jpeg",
           name: "",
           phoneNumber: "",
           birthday: "",
@@ -77,7 +85,7 @@ export default function NewStudent() {
           gender: Yup.string().required("Vui lòng chọn giới tính"),
           dayAdmission: Yup.string().required("Vui lòng chọn ngày nhập học"),
         })}
-        onSubmit={handleSaveAdded}
+        onSubmit={values => handleSaveAdded(values)}
       >
         {({ values, setFieldValue, handleSubmit, isValid, dirty }) => {
           return (

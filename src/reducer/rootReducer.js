@@ -1,6 +1,5 @@
 import { combineReducers } from "redux";
-import { pagination } from "./pagination";
 import { students } from "./students";
-import { search } from "./search";
+import { auth } from "./auth";
 
-export default combineReducers({ pagination, students, search });
+export default combineReducers({ students, auth });

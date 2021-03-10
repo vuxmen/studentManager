@@ -1,8 +1,8 @@
 import { actionType } from './actionType';
 
-export const moveExactlyToPage = page => (
+export const changeCurrentPage = page => (
     {
-        type: actionType.MOVE_EXACTLY_TO_PAGE,
+        type: actionType.CHANGE_CURRENT_PAGE,
         payload: {
             page,
         }
@@ -18,22 +18,37 @@ export const changeSearchingValue = value => (
     }
 )
 
-export const editStudent = modifiedStudent => (
+export const changeLoadingStatus = status => (
     {
-        type: actionType.MODIFY_STUDENT.SAVE,
+        type: actionType.CHANGE_LOADING_STATUS_OF_STUDENTLIST,
         payload: {
-            modifiedStudent
+            status
         }
     }
 )
 
-
-export const saveStudent = newStudent => (
+export const changeErrorStatus = status => (
     {
-        type: actionType.ADD_STUDENT.SAVE,
+        type: actionType.CHANGE_ERROR_STATUS_OF_STUDENTLIST,
         payload: {
-            newStudent
+            status
         }
+    }
+)
+
+export const updateStudentList = updateList => (
+    {
+        type: actionType.UPDATELIST,
+        payload: {
+            updateList
+        }
+    }
+)
+
+export const reloadPage = () => (
+    {
+        type: actionType.RELOAD_PAGE,
+        payload: {}
     }
 )
 

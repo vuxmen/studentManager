@@ -1,34 +1,28 @@
 import React from "react";
 import style from "./Pagination.module.css";
 import { useSelector, useDispatch } from "react-redux";
-import { moveExactlyToPage } from "../action/actionCreator";
-import { appConstants } from "../constants";
+import { changeCurrentPage, reloadPage } from "../action/actionCreator";
 import { Pagination } from "antd";
 
 export default function PaginationCpn() {
-  const currentPage = useSelector((state) => state.pagination.currentPage);
-  const searchValue = useSelector((state) => state.search.searchValue);
-  const studentList = useSelector((state) => state.students.studentList);
-
-  const totalMatch = studentList.filter(
-    (student) =>
-      student.name.includes(searchValue) ||
-      student.phoneNumber.includes(searchValue)
-  ).length;
-
+  const currentPage = useSelector(state => state.auth.searchPackage.page);
+  const pageSize = useSelector(state => state.auth.searchPackage.pageSize);
   const dispatch = useDispatch();
 
-  const handleMoveExactlyToPage = (pageNumber) => {
-    dispatch(moveExactlyToPage(pageNumber));
-  };
+  const handleChangeCurrentPage = (pageNumber, pageSize) => {
+    dispatch(changeCurrentPage(pageNumber));
+    dispatch(reloadPage());
+  }
 
   return (
     <div className={style.pages}>
       <Pagination
         defaultCurrent={currentPage}
-        total={totalMatch}
-        pageSize={appConstants.pageSize}
-        onChange={handleMoveExactlyToPage}
+        total={25}
+        pageSize={pageSize}
+        responsive={true}
+        pageSizeOptions={[30]}
+        onChange={(pageNumber, pageSize) => handleChangeCurrentPage(pageNumber, pageSize)}
       />
     </div>
   );

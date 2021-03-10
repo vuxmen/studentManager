@@ -1,25 +1,31 @@
 import axios from 'axios';
-const user = 'vu';
-const url = '';
-const getStudentEndPoint = ``;
-const addStudentEndPoint = ``;
-const modifyStudentEndPoint = ``;
+const url = 'http://localhost:5000/';
+const getStudentEndPoint = `${url}Student/GetStudents`;
+const addStudentEndPoint = `${url}Student/AddStudent`;
 
-export const getStudent = async () => 
+export const getStudent = async ({search, page, pageSize}) => (
     await axios.get(getStudentEndPoint, {
         params: {
-            user: user
+            search,
+            page,
+            pageSize
         }
-    });
+    })
+).data.data;
 
-export const addStudent = async (newStudent) => 
-    await axios.get(addStudentEndPoint, {
-        user: user,
-        newStudent: newStudent
-    });
+export const addStudent = async ({
+    dayAdmission, name, 
+    gender, img, phoneNumber, birthday
+}) => (
+    await axios.post(addStudentEndPoint, {
+        CreatedDate: new Date(),
+        AdmissionDate: dayAdmission,
+        Name: name,
+        Gender: gender,
+        PhoneNumber: phoneNumber,
+        ImageFile: img,
+        Birthday: birthday
+    })
+);
+    
 
-export const modifyStudent = async (modifiedStudent) => 
-    await axios.get(modifyStudentEndPoint, {
-        user: user,
-        modifiedStudent: modifiedStudent
-    });

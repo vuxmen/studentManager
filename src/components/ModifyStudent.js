@@ -6,7 +6,7 @@ import style from "./NewStudent.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import * as Yup from "yup";
-import { editStudent } from "../action/actionCreator";
+// import { editStudent } from "../action/actionCreator";
 import { useHistory } from "react-router-dom";
 import { ErrorMessage, Field, Formik } from "formik";
 import { Utils } from "../utils/Utils";
@@ -42,7 +42,7 @@ export default function ModifyStudent(props) {
   const history = useHistory();
 
   const handleSaveStudent = (values) => {
-    dispatch(editStudent(values));
+    // dispatch(editStudent(values));
     history.push("/");
   };
 
