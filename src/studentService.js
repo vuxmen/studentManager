@@ -14,11 +14,11 @@ export const getStudent = async ({search, page, pageSize}) => (
 ).data.data;
 
 export const addStudent = async ({
-    dayAdmission, name, 
+    dayAdmission, name, createdDate,
     gender, img, phoneNumber, birthday
 }) => (
     await axios.post(addStudentEndPoint, {
-        CreatedDate: new Date(),
+        CreatedDate: createdDate,
         AdmissionDate: dayAdmission,
         Name: name,
         Gender: gender,
@@ -27,5 +27,7 @@ export const addStudent = async ({
         Birthday: birthday
     })
 );
+    
+
     
 

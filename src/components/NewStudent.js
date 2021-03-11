@@ -4,12 +4,12 @@ import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import style from "./NewStudent.module.css";
 import { Formik, Field, ErrorMessage } from "formik";
-import { useDispatch } from "react-redux";
-import { reloadPage } from "../action/actionCreator";
 import { useHistory } from "react-router-dom";
 import { Utils } from "../utils/Utils";
 import * as Yup from "yup";
 import { addStudent } from '../studentService';
+import { useDispatch } from 'react-redux';
+import { reloadPage } from '../action/actionCreator';
 
 const { confirm } = Modal;
 
@@ -32,17 +32,27 @@ function showConfirm(onOk, onCancel) {
 }
 
 export default function NewStudent() {
-  const dispatch = useDispatch();
   const history = useHistory();
+  const dispatch = useDispatch();
+  const convertGender = (values) => {
+    values.gender = (values.gender === "Nam") ? 1 : 2;
+  }
 
-  const handleSaveAdded = async values => {
-      try {
-        await addStudent(values);
-        dispatch(reloadPage());
-        history.push('/');
-      } catch (err) {
-        console.log(err);
-      }
+  const handleSaveAdded = (values) => {
+    values.createdDate = new Date().toLocaleDateString();
+    convertGender(values);
+    values.img = '';
+    console.log(values);
+    addStudent(values);
+    // async function postNewStudent () {
+      
+    //     await addStudent(values);
+    //     dispatch(reloadPage());
+    //     history.push('/');
+      
+      
+    // }
+    // postNewStudent();
   };
 
   const handleCancelAdding = (dirty) => {
@@ -60,12 +70,13 @@ export default function NewStudent() {
     <div className={style.newStudent}>
       <Formik
         initialValues={{
-          img: "default.jpeg",
+          img: "/studentImg/default.jpeg",
           name: "",
           phoneNumber: "",
           birthday: "",
           gender: "",
           dayAdmission: "",
+          createdDate: ""
         }}
         validationSchema={Yup.object().shape({
           img: Yup.string().required(),
@@ -111,7 +122,8 @@ export default function NewStudent() {
                         }}
                       />
                       <img
-                        src={Utils.getAvatarUrlFromFileName(values.img)}
+                        name = "img"
+                        src={values.img}
                         alt={values.name}
                       />
                     </label>
@@ -146,6 +158,7 @@ export default function NewStudent() {
                         type="radio"
                         name="gender"
                         value="Nữ"
+                        
                       />
                       <label htmlFor="Nữ">Nữ</label>
                     </div>

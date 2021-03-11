@@ -5,8 +5,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from 'react-router-dom';
 import { getStudent } from '../studentService';
 import { updateStudentList, changeLoadingStatus, changeErrorStatus } from '../action/actionCreator';
-
-
 export default function StudentList() {
 
   const studentList = useSelector(state => state.students.studentList);
@@ -18,16 +16,21 @@ export default function StudentList() {
   const history = useHistory();
 
 
-  useEffect(async () => {
-    try {
+  useEffect(() => {
+    const fetchData = async () => {
       const renderList = await getStudent(searchPackage);
-      dispatch(updateStudentList(renderList));
-      dispatch(changeLoadingStatus(false));
-    } catch {
-      dispatch(changeLoadingStatus(false));
-      dispatch(changeErrorStatus(true));
-    }
-  },[dispatch, reloadPage]);  
+        try {
+          dispatch(updateStudentList(renderList));
+          dispatch(changeLoadingStatus(false));
+        } catch {
+          dispatch(changeLoadingStatus(false));
+          dispatch(changeErrorStatus(true));
+        }
+      }
+      fetchData();
+    }, [dispatch, reloadPage, searchPackage]
+  );
+     
 
   console.log(studentList);
 
