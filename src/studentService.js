@@ -1,6 +1,5 @@
 import axios from "axios";
 import FormData from "form-data";
-import { number } from "yup/lib/locale";
 import { Utils } from "./utils/Utils";
 const url = "http://localhost:5000/Student";
 const getStudentEndPoint = `${url}/GetStudents`;

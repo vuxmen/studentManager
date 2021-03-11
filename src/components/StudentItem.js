@@ -2,7 +2,6 @@ import React from "react";
 import style from "./StudentItem.module.css";
 import { Male, Female } from "react-gender";
 import { useHistory } from "react-router-dom";
-import { Utils } from "../utils/Utils";
 import Avatar from "antd/lib/avatar/avatar";
 
 export default function StudentItem({ student }) {

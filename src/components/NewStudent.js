@@ -1,11 +1,11 @@
 import React from "react";
-import { Modal, Button, Space } from "antd";
+import { Modal, Button, Space, message } from "antd";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import style from "./NewStudent.module.css";
 import { Formik, Field, ErrorMessage } from "formik";
 import { useDispatch } from "react-redux";
-import { saveStudent } from "../action/actionCreator";
+import { refreshStudentList } from "../action/actionCreator";
 import { useHistory } from "react-router-dom";
 import { Utils } from "../utils/Utils";
 import * as Yup from "yup";
@@ -36,15 +36,20 @@ export default function NewStudent() {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const handleSaveAdded = async (values) => {
-    await addStudent(values);
-    return;
-
-    dispatch(saveStudent(values));
-    history.push("/");
+  const handleSaveAdded = async (values, helper) => {
+    try {
+      message.success("Lưu thành công");
+      await addStudent(values);
+      dispatch(refreshStudentList());
+      history.push("/");
+    } catch (e) {
+      message.error("có lỗi xảy ra, vui lòng thử lại!");
+    } finally {
+      helper.setSubmitting(false);
+    }
   };
 
-  const handleCancelAdding = (dirty) => {
+  const handleCancelAdding = (dirty, helper) => {
     if (!dirty) history.push("/");
     else
       showConfirm(
@@ -86,7 +91,14 @@ export default function NewStudent() {
         validateOnMount={true}
         onSubmit={handleSaveAdded}
       >
-        {({ values, setFieldValue, handleSubmit, isValid, dirty }) => {
+        {({
+          values,
+          setFieldValue,
+          handleSubmit,
+          isValid,
+          dirty,
+          isSubmitting,
+        }) => {
           return (
             <React.Fragment>
               <div
@@ -173,11 +185,17 @@ export default function NewStudent() {
                   <Button
                     disabled={!isValid}
                     type="primary"
+                    loading={isSubmitting}
                     onClick={handleSubmit}
                   >
                     Thêm
                   </Button>
-                  <Button onClick={() => handleCancelAdding(dirty)}>Huỷ</Button>
+                  <Button
+                    disabled={isSubmitting}
+                    onClick={() => handleCancelAdding(dirty)}
+                  >
+                    Huỷ
+                  </Button>
                 </Space>
               </div>
             </React.Fragment>
